@@ -7,3 +7,7 @@
 - `body-parser` - Express body-parser is an npm library used to process data sent through an HTTP request body.
 - `cors` - CORS stands for Cross-Origin Resource Sharing . It allows us to relax the security applied to an API. This is done by bypassing the Access-Control-Allow-Origin headers, which specify which origins can access the API.
 - `mongoose` - Mongoose is a popular npm package that provides a way to interact with MongoDB databases using Node.js.
+- `bcrypt` - bcrypt is a popular npm package used for password hashing and salting, providing a secure way to store passwords in a database.
+- `joi` - joi is a popular npm package used for data validation in JavaScript applications, providing a flexible and easy-to-use validation schema.
+- `mongoose-paginate-v2` - mongoose-paginate-v2 is a popular npm package used to enable pagination of Mongoose queries in Node.
+- `mongoose-delete` - Mongoose-delete is a package that allows for soft deleting documents in MongoDB using Mongoose.
