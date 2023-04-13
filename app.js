@@ -30,10 +30,10 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
+/* ---------- Include Routes ---------- */
+const routes = require('./routes');
+routes(app);                /* Method 1 */
+// app.use(routes);         /* method 2 */
 
 /* ---------- Create Server ---------- */
 const port = process.env.PORT || 8080
