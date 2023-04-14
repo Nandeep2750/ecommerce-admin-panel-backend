@@ -11,3 +11,6 @@
 - `joi` - joi is a popular npm package used for data validation in JavaScript applications, providing a flexible and easy-to-use validation schema.
 - `mongoose-paginate-v2` - mongoose-paginate-v2 is a popular npm package used to enable pagination of Mongoose queries in Node.
 - `mongoose-delete` - Mongoose-delete is a package that allows for soft deleting documents in MongoDB using Mongoose.
+- `jsonwebtoken` - The jsonwebtoken package is used to create, verify, and decode JSON web tokens (JWTs) in web applications.
+- `uuid` - The uuid package is used to generate unique identifiers (UUIDs) for objects in web applications.
+- `moment` - The moment package is used to parse, validate, manipulate, and display dates and times in JavaScript.
