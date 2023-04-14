@@ -61,7 +61,7 @@ class AuthController extends CmsController {
                                 } else {
 
                                     let admin = new AdminModel({
-                                        ...body,
+                                        ...value,
                                         password: hash
                                     })
                                     admin.save().then((result) => {
