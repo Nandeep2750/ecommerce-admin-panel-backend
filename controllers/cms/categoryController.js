@@ -122,6 +122,35 @@ class CategoryController extends CmsController {
         }
     }
 
+    /** ---------- Category List ----------
+    * 
+    * @return {Array} - It will give us Paginate list of categories.
+    * 
+    * ---------------------------------------- */
+
+    getCategoriesList = (req, res, next) => {
+
+        try {
+            CategoryModel.find().select(["categoryName"]).then((result) => {
+                return res.status(STATUS.SUCCESS_CODE).json({
+                    message: "Successfully find categories.",
+                    data: result
+                })
+            }).catch((err) => {
+                console.error("🚀 ~ file: categoryController.js:141 ~ CategoryController ~ CategoryModel.find ~ err:", err)
+                return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                    message: err.message
+                })
+            });
+
+        } catch (err) {
+            console.error("🚀 ~ file: categoryController.js:149 ~ CategoryController ~ err:", err)
+            return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                message: "Something went wrong.",
+            });
+        }
+    }
+
 }
 
 module.exports = new CategoryController();
