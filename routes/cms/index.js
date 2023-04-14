@@ -7,6 +7,7 @@ const { PROJECT_NAME } = require('../../config/constants');
 const authRouter = require('./auth');
 const adminRouter = require('./admin');
 const userRouter = require('./user');
+const categoryRouter = require('./category');
 
 router.get('/', function (req, res) {
     res.send(`Welcome to ${PROJECT_NAME} CMS Route!`);
@@ -15,5 +16,6 @@ router.get('/', function (req, res) {
 router.use('/auth', authRouter);
 router.use('/admin', adminRouter);
 router.use('/user', userRouter);
+router.use('/category', categoryRouter);
 
 module.exports = router;
