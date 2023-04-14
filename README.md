@@ -14,3 +14,4 @@
 - `jsonwebtoken` - The jsonwebtoken package is used to create, verify, and decode JSON web tokens (JWTs) in web applications.
 - `uuid` - The uuid package is used to generate unique identifiers (UUIDs) for objects in web applications.
 - `moment` - The moment package is used to parse, validate, manipulate, and display dates and times in JavaScript.
+- `joi-objectid` - The joi-objectid package is used to validate MongoDB ObjectId strings in Node.js using the Joi validation library.
