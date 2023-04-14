@@ -1,13 +1,14 @@
 const PROJECT_NAME = process.env.PROJECT_NAME || 'Ecommerce Admin Panel'
 
 const ADMIN_CONFIG = {
-    password: {
-        min: 8,
-        max: 20,
+    JWT_KEY: 'auth.secret.admin',
+    PASSWORD: {
+        MIN: 8,
+        MAX: 20,
     },
-    saltRounds: 10,
-    tokenExpiresIn: '24h',
-    refreshTokenValidForDays: 4  /* In Days */
+    SALT_ROUNDS: 10,
+    TOKEN_EXPIRES_IN: '24h',
+    REFRESH_TOKEN_VALID_FOR_DAYS: 4  /* In Days */
 }
 
 module.exports = {
