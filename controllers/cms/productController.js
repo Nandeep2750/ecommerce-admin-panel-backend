@@ -221,6 +221,67 @@ class ProductController extends CmsController {
         }
     }
 
+    /** ---------- Delete Product ----------
+    * 
+    * @param {objectId} _id - Product ID.
+    * 
+    * @return {Object} - It will give us success details after delete.
+    * 
+    * ---------------------------------------- */
+
+    deleteProduct = async (req, res, next) => {
+        try {
+            const { query } = req;
+
+            const validationSchema = Joi.object({
+                _id: Joi.objectId().required()
+            });
+            const { error, value } = validationSchema.validate(query);
+
+            if (error) {
+                return res.status(STATUS.BAD_REQUEST_CODE).json({
+                    message: error.message,
+                })
+            } else {
+
+                ProductModel.findById(value._id).exec().then((result) => {
+                    if (result) {
+                        ProductModel.deleteById(value._id).exec().then((result) => {
+                            if (result) {
+                                return res.status(STATUS.SUCCESS_CODE).json({
+                                    message: "Product deleted successfully.",
+                                })
+                            } else {
+                                return res.status(STATUS.NOT_FOUND_CODE).json({
+                                    message: "No Product available for given id."
+                                })
+                            }
+                        }).catch((err) => {
+                            console.error("🚀 ~ file: productController.js:260 ~ ProductController ~ ProductModel.deleteById ~ err:", err)
+                            return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                                message: err.message
+                            })
+                        })
+                    } else {
+                        return res.status(STATUS.NOT_FOUND_CODE).json({
+                            message: "No Product available for given id."
+                        })
+                    }
+                }).catch((err) => {
+                    console.error("🚀 ~ file: productController.js:271 ~ ProductController ~ ProductModel.findById ~ err:", err)
+                    return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                        message: err.message
+                    })
+                })
+            }
+        } catch (err) {
+            console.error("🚀 ~ file: productController.js:278 ~ ProductController ~ deleteProduct ~ err:", err)
+            return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                message: "Something went wrong.",
+            });
+        }
+    }
+
 }
 
 module.exports = new ProductController();
