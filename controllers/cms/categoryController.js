@@ -98,7 +98,7 @@ class CategoryController extends CmsController {
                     sort: { createdAt: -1 },
                     page: value.page || PAGINATION_CONFIG.PAGE,
                     limit: value.limit || PAGINATION_CONFIG.LIMIT,
-                    select: ['categoryName']
+                    select: ['categoryName',"status"]
                 };
 
                 CategoryModel.paginate(query, options).then((result) => {
@@ -131,7 +131,7 @@ class CategoryController extends CmsController {
     getCategoriesList = (req, res, next) => {
 
         try {
-            CategoryModel.find().select(["categoryName"]).then((result) => {
+            CategoryModel.find().select(["categoryName","status"]).then((result) => {
                 return res.status(STATUS.SUCCESS_CODE).json({
                     message: "Successfully find categories.",
                     data: result

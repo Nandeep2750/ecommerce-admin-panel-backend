@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate-v2');
 const mongoose_delete = require('mongoose-delete');
+const { CATEGORY_CONFIG } = require('../config/constants');
 
 const categorySchema = mongoose.Schema(
     {
@@ -8,6 +9,12 @@ const categorySchema = mongoose.Schema(
             type: String,
             require: true,
             unique: true
+        },
+        status: {
+            type: String,
+            enum: Object.values(CATEGORY_CONFIG.STATUS_TYPE),
+            require: true,
+            default: CATEGORY_CONFIG.STATUS_TYPE.ACTIVE
         },
     },
     {
