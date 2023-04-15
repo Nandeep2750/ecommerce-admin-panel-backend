@@ -5,6 +5,7 @@ const { PROJECT_NAME } = require('../../config/constants');
 
 /* Import sub routes files */
 const authRouter = require('./auth');
+const dashboardRouter = require('./dashboard');
 const adminRouter = require('./admin');
 const userRouter = require('./user');
 const categoryRouter = require('./category');
@@ -19,5 +20,6 @@ router.use('/admin', adminRouter);
 router.use('/user', userRouter);
 router.use('/category', categoryRouter);
 router.use('/product', productRouter);
+router.use('/dashboard', dashboardRouter);
 
 module.exports = router;
