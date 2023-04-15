@@ -8,5 +8,6 @@ const adminAuthCheck = require("../../middleware/cms/admin-auth-check");
 const productController = require('../../controllers/cms/productController')
 
 router.post('/create', adminAuthCheck, productController.createProduct)
+router.post('/paginate-list', adminAuthCheck, productController.getPaginateProductsList)
 
 module.exports = router;

@@ -73,6 +73,74 @@ class ProductController extends CmsController {
             });
         }
     }
+
+    /** ---------- Get Paginate Products List ----------
+    * 
+    * @param {Number} page - Page number.
+    * @param {Number} limit - Data limit perpage.
+    * @param {String} search - It's use for search by productName, productDescription.
+    * @param {ObjectId} categoryId - category Id for filter.
+    * 
+    * @return {Array} - It will give us Paginate list of Products.
+    * 
+    * ---------------------------------------- */
+
+    getPaginateProductsList = (req, res, next) => {
+
+        try {
+            const { body } = req;
+
+            const validationSchema = Joi.object({
+                page: Joi.number().required(),
+                limit: Joi.number().required(),
+                search: Joi.string().allow(null, ''),
+                categoryId: Joi.objectId().allow(null, ''),
+            });
+            const { error, value } = validationSchema.validate(body);
+
+            if (error) {
+                return res.status(STATUS.BAD_REQUEST_CODE).json({
+                    message: error.message,
+                })
+            } else {
+                let query = {
+                    $or: [
+                        { productName: new RegExp(value.search, "gi") },
+                        { productDescription: new RegExp(value.search, "gi") },
+                    ]
+                };
+
+                if (value.categoryId) {
+                    query.categoryId = value.categoryId
+                }
+                let options = {
+                    sort: { createdAt: -1 },
+                    page: value.page || PAGINATION_CONFIG.PAGE,
+                    limit: value.limit || PAGINATION_CONFIG.LIMIT,
+                    select: ['productName', 'productDescription', 'productImageUrl', 'productPrice']
+                };
+
+                ProductModel.paginate(query, options).then((result) => {
+                    return res.status(STATUS.SUCCESS_CODE).json({
+                        message: "Successfully find products.",
+                        data: result
+                    })
+                }).catch((err) => {
+                    console.error("🚀 ~ file: productController.js:129 ~ ProductController ~ ProductModel.paginate ~ err:", err)
+                    return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                        message: err.message
+                    })
+                });
+            }
+
+        } catch (err) {
+            console.error("🚀 ~ file: productController.js:138 ~ ProductController ~ err:", err)
+            return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                message: "Something went wrong.",
+            });
+        }
+    }
+
 }
 
 module.exports = new ProductController();
