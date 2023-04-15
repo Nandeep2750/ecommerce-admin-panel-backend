@@ -4,14 +4,14 @@ const mongoose_delete = require('mongoose-delete');
 
 const productSchema = mongoose.Schema(
     {
+        productName: {
+            type: String,
+            require: true,
+        },
         categoryId: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,
             ref: 'tbl_category'
-        },
-        productName: {
-            type: String,
-            require: true,
         },
         productDescription: {
             type: String,
