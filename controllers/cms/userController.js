@@ -51,7 +51,7 @@ class UserController extends CmsController {
                     sort: { createdAt: -1 },
                     page: value.page || PAGINATION_CONFIG.PAGE,
                     limit: value.limit || PAGINATION_CONFIG.LIMIT,
-                    select: ['firstName', 'lastName', 'email', 'status']
+                    select: ['firstName', 'lastName', 'email', 'gender', 'status']
                 };
 
                 UserModel.paginate(query, options).then((result) => {
