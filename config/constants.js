@@ -28,6 +28,13 @@ const USER_CONFIG = {
     SALT_ROUNDS: 10,
 }
 
+const CATEGORY_CONFIG = {
+    STATUS_TYPE: {
+        ACTIVE: "ACTIVE",
+        INACTIVE: "INACTIVE",
+    }
+}
+
 const PAGINATION_CONFIG = {
     PAGE: 1,
     LIMIT: 10
@@ -37,5 +44,6 @@ module.exports = {
     PROJECT_NAME,
     ADMIN_CONFIG,
     USER_CONFIG,
-    PAGINATION_CONFIG
+    PAGINATION_CONFIG,
+    CATEGORY_CONFIG
 };

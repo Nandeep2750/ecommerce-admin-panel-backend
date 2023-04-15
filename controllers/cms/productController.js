@@ -194,24 +194,23 @@ class ProductController extends CmsController {
                 }, { new: true }).select(['productName', 'categoryId', 'productDescription', 'productImageUrl', 'productPrice']).populate({
                     path: "categoryId",
                     select: ["categoryName"]
-                })
-                    .exec().then((result) => {
-                        if (result) {
-                            return res.status(STATUS.SUCCESS_CODE).json({
-                                message: "Product updated successfully.",
-                                data: result
-                            })
-                        } else {
-                            return res.status(STATUS.NOT_FOUND_CODE).json({
-                                message: "No Product available for given id."
-                            })
-                        }
-                    }).catch((err) => {
-                        console.error("🚀 ~ file: productController.js:210 ~ ProductController ~ .exec ~ err:", err)
-                        return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
-                            message: err.message
+                }).exec().then((result) => {
+                    if (result) {
+                        return res.status(STATUS.SUCCESS_CODE).json({
+                            message: "Product updated successfully.",
+                            data: result
                         })
+                    } else {
+                        return res.status(STATUS.NOT_FOUND_CODE).json({
+                            message: "No Product available for given id."
+                        })
+                    }
+                }).catch((err) => {
+                    console.error("🚀 ~ file: productController.js:210 ~ ProductController ~ .exec ~ err:", err)
+                    return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                        message: err.message
                     })
+                })
             }
 
         } catch (err) {
