@@ -3,6 +3,7 @@ const Joi = require('joi');
 const CategoryModel = require('../../models/tbl_category')
 const { CmsController } = require('./cmsController');
 const { STATUS } = require('../../config/statuscode');
+const { CATEGORY_CONFIG } = require('../../config/constants');
 
 class CategoryController extends CmsController {
 
@@ -72,6 +73,7 @@ class CategoryController extends CmsController {
     * 
     * @param {Number} page - Page number.
     * @param {Number} limit - Data limit perpage.
+    * @param {String} status - Status.
     * 
     * @return {Array} - It will give us Paginate list of categories.
     * 
@@ -85,6 +87,7 @@ class CategoryController extends CmsController {
             const validationSchema = Joi.object({
                 page: Joi.number().required(),
                 limit: Joi.number().required(),
+                status: Joi.string().optional().allow(null,'').valid(...Object.values(CATEGORY_CONFIG.STATUS_TYPE)),
             });
             const { error, value } = validationSchema.validate(body);
 
@@ -94,6 +97,10 @@ class CategoryController extends CmsController {
                 })
             } else {
                 let query = {};
+
+                if (value.status) {
+                    query.status = value.status
+                }
                 let options = {
                     sort: { createdAt: -1 },
                     page: value.page || PAGINATION_CONFIG.PAGE,
@@ -124,6 +131,8 @@ class CategoryController extends CmsController {
 
     /** ---------- Category List ----------
     * 
+    * @param {String} status - Status.
+    * 
     * @return {Array} - It will give us Paginate list of categories.
     * 
     * ---------------------------------------- */
@@ -131,17 +140,39 @@ class CategoryController extends CmsController {
     getCategoriesList = (req, res, next) => {
 
         try {
-            CategoryModel.find().select(["categoryName","status"]).then((result) => {
-                return res.status(STATUS.SUCCESS_CODE).json({
-                    message: "Successfully find categories.",
-                    data: result
-                })
-            }).catch((err) => {
-                console.error("🚀 ~ file: categoryController.js:141 ~ CategoryController ~ CategoryModel.find ~ err:", err)
-                return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
-                    message: err.message
-                })
+
+            const { query } = req;
+
+            const validationSchema = Joi.object({
+                status: Joi.string().optional().allow(null,'').valid(...Object.values(CATEGORY_CONFIG.STATUS_TYPE)),
             });
+            const { error, value } = validationSchema.validate(query);
+
+            if (error) {
+                return res.status(STATUS.BAD_REQUEST_CODE).json({
+                    message: error.message,
+                })
+            } else {
+
+                let filter = {};
+
+                if (value.status) {
+                    filter.status = value.status
+                }
+
+                CategoryModel.find(filter).select(["categoryName","status"]).then((result) => {
+                    return res.status(STATUS.SUCCESS_CODE).json({
+                        message: "Successfully find categories.",
+                        data: result
+                    })
+                }).catch((err) => {
+                    console.error("🚀 ~ file: categoryController.js:141 ~ CategoryController ~ CategoryModel.find ~ err:", err)
+                    return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                        message: err.message
+                    })
+                });
+            }
+
 
         } catch (err) {
             console.error("🚀 ~ file: categoryController.js:149 ~ CategoryController ~ err:", err)
