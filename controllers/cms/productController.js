@@ -145,6 +145,56 @@ class ProductController extends CmsController {
         }
     }
 
+     /** ---------- Get Product By ID ----------
+    * 
+    * @param {String} productId - Product ID.
+    * 
+    * @return {Object} - It will give us Product details.
+    * 
+    * ---------------------------------------- */
+
+    getProductByID = (req, res, next) => {
+
+        try {
+
+            const { query } = req;
+
+            const validationSchema = Joi.object({
+                productId: Joi.objectId().required()
+            });
+            const { error, value } = validationSchema.validate(query);
+
+            if (error) {
+                return res.status(STATUS.BAD_REQUEST_CODE).json({
+                    message: error.message,
+                })
+            } else {
+                ProductModel.findById(value.productId).exec().then((result) => {
+                    if (result) {
+                        return res.status(STATUS.SUCCESS_CODE).json({
+                            message: "User details fetched successfully",
+                            data: result
+                        })
+                    } else {
+                        return res.status(STATUS.NOT_FOUND_CODE).json({
+                            message: "No user available for given id."
+                        })
+                    }
+                }).catch((err) => {
+                    console.error("🚀 ~ file: productController.js:184 ~ ProductController ~ ProductModel.findById ~ err:", err)
+                    return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                        message: err.message
+                    })
+                })
+            }
+        } catch (err) {
+            console.error("🚀 ~ file: productController.js:192 ~ ProductController ~ err:", err)
+            return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                message: "Something went wrong.",
+            });
+        }
+    }
+
     /** ---------- Update Product ----------
     * 
     * @param {ObjectId} _id - Product Id.
