@@ -1,4 +1,5 @@
 const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi)
 
 const CategoryModel = require('../../models/tbl_category')
 const ProductModel = require('../../models/tbl_product')
@@ -273,7 +274,7 @@ class CategoryController extends CmsController {
 
                 CategoryModel.findById(value._id).exec().then((result) => {
                     if (result) {
-                        CategoryModel.deleteById(value._id).exec().then((result) => {
+                        CategoryModel.findOneAndDelete({_id : value._id}).then((result) => {
                             if (result) {
                                 return res.status(STATUS.SUCCESS_CODE).json({
                                     message: "Category deleted successfully.",

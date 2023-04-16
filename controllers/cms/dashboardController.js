@@ -1,5 +1,6 @@
 const UserModel = require('../../models/tbl_user');
 const ProductModel = require('../../models/tbl_product')
+const CategoryModel = require('../../models/tbl_category')
 
 const { CmsController } = require('./cmsController');
 const { STATUS } = require('../../config/statuscode');
@@ -21,10 +22,12 @@ class DashboardController extends CmsController {
         try {
             let users = await UserModel.count()
             let products = await ProductModel.count()
+            let categories = await CategoryModel.count()
             
             let responseData = {
                 users : users,
                 products: products,
+                categories: categories,
             }
 
             return res.status(STATUS.SUCCESS_CODE).json({
