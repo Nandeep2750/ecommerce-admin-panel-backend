@@ -1,5 +1,6 @@
 const ObjectId = require("mongoose").Types.ObjectId;
-const Joi = require('joi');
+const moment = require("moment");
+const Joi = require('joi').extend(require('@joi/date'));
 Joi.objectId = require('joi-objectid')(Joi)
 
 const OrderModel = require('../../models/tbl_order')
@@ -122,6 +123,7 @@ class ProductController extends CmsController {
     * @param {Number} page - Page number.
     * @param {Number} limit - Data limit perpage.
     * @param {ObjectId} userId - User Id.
+    * @param {ObjectId} date - Date.
     * 
     * @return {Array} - It will give us Paginate list of Orders.
     * 
@@ -135,7 +137,8 @@ class ProductController extends CmsController {
             const validationSchema = Joi.object({
                 page: Joi.number().required(),
                 limit: Joi.number().required(),
-                userId: Joi.objectId().optional().allow(null, '')
+                userId: Joi.objectId().optional().allow(null, ''),
+                date: Joi.date().format('YYYY-MM-DD').utc().optional().allow(null, '')
             });
             const { error, value } = validationSchema.validate(body);
 
@@ -148,6 +151,14 @@ class ProductController extends CmsController {
 
                 if (value.userId) {
                     query.userId = value.userId
+                }
+
+                if (value.date) {
+                    query.$expr = {
+                        $eq: [
+                            { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }, body.date
+                        ]
+                    }
                 }
 
                 let options = {
