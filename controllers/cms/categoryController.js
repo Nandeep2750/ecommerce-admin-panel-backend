@@ -1,4 +1,5 @@
 const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi)
 
 const CategoryModel = require('../../models/tbl_category')
 const ProductModel = require('../../models/tbl_product')
@@ -183,6 +184,63 @@ class CategoryController extends CmsController {
         }
     }
 
+    
+    /** ---------- Update Category ----------
+    * 
+    * @param {ObjectId} _id - Category Id.
+    * @param {String} categoryName - Category Name.
+    * @param {String} status - Status.
+    * 
+    * @return {Object} - Will get Object data after update Category.
+    * 
+    * ---------------------------------------- */
+
+    updatecategory = async (req, res, next) => {
+
+        try {
+            const { body } = req;
+
+            const validationSchema = Joi.object({
+                _id: Joi.objectId().required(),
+                categoryName: Joi.string().optional(),
+                status: Joi.string().optional().valid(...Object.values(CATEGORY_CONFIG.STATUS_TYPE)),
+            });
+            const { error, value } = validationSchema.validate(body);
+
+            if (error) {
+                return res.status(STATUS.BAD_REQUEST_CODE).json({
+                    message: error.message,
+                })
+            } else {
+
+                CategoryModel.findByIdAndUpdate(value._id, { ...value }, { new: true })
+                .select(["categoryName","status"]).exec().then((result) => {
+                    if (result) {
+                        return res.status(STATUS.SUCCESS_CODE).json({
+                            message: `Category updated successfully.`,
+                            data: result
+                        })
+                    } else {
+                        return res.status(STATUS.NOT_FOUND_CODE).json({
+                            message: "No Category found for given id."
+                        })
+                    }
+                }).catch((err) => {
+                    console.error("🚀 ~ file: categoryController.js:226 ~ CategoryController ~ .select ~ err:", err)
+                    return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                        message: err.message
+                    })
+                })
+            }
+
+        } catch (err) {
+            console.error("🚀 ~ file: categoryController.js:235 ~ CategoryController ~ updatecategory= ~ err:", err)
+            return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                message: "Something went wrong.",
+            });
+        }
+    }
+
     /** ---------- Delete Category ----------
     * 
     * @param {objectId} _id - Category ID.
@@ -212,13 +270,13 @@ class CategoryController extends CmsController {
 
                 if (availableProductCount > 0) {
                     return res.status(STATUS.FORBIDDEN_CODE).json({
-                        message: `There are ${availableProductCount} products created for this task type, So you can't delete this Category.`
+                        message: `There are ${availableProductCount} products created for this category, So you can't delete this Category.`
                     })
                 }
 
                 CategoryModel.findById(value._id).exec().then((result) => {
                     if (result) {
-                        CategoryModel.deleteById(value._id).exec().then((result) => {
+                        CategoryModel.findOneAndDelete({_id : value._id}).then((result) => {
                             if (result) {
                                 return res.status(STATUS.SUCCESS_CODE).json({
                                     message: "Category deleted successfully.",

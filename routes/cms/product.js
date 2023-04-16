@@ -8,7 +8,7 @@ const adminAuthCheck = require("../../middleware/cms/admin-auth-check");
 const productController = require('../../controllers/cms/productController')
 
 router.post('/create', adminAuthCheck, productController.createProduct)
-router.post('/paginate-list', adminAuthCheck, productController.getPaginateProductsList)
+router.post('/list', adminAuthCheck, productController.getPaginateProductsList)
 router.put('/update', adminAuthCheck, productController.updateProduct)
 router.delete('/delete', adminAuthCheck, productController.deleteProduct)
 
