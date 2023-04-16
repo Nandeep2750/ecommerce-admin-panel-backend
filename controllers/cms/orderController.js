@@ -119,6 +119,68 @@ class ProductController extends CmsController {
         }
     }
 
+    /** ---------- Get Paginate Orders List ----------
+    * 
+    * @param {Number} page - Page number.
+    * @param {Number} limit - Data limit perpage.
+    * 
+    * @return {Array} - It will give us Paginate list of Orders.
+    * 
+    * ---------------------------------------- */
+
+    getOrdersList = (req, res, next) => {
+
+        try {
+            const { body } = req;
+
+            const validationSchema = Joi.object({
+                page: Joi.number().required(),
+                limit: Joi.number().required(),
+            });
+            const { error, value } = validationSchema.validate(body);
+
+            if (error) {
+                return res.status(STATUS.BAD_REQUEST_CODE).json({
+                    message: error.message,
+                })
+            } else {
+                let query = {};
+
+                let options = {
+                    sort: { createdAt: -1 },
+                    page: value.page || PAGINATION_CONFIG.PAGE,
+                    limit: value.limit || PAGINATION_CONFIG.LIMIT,
+                    populate: {
+                        path: 'userId',
+                        select: ['firstName','lastName','email'],
+                    },
+                    populate: {
+                        path: 'items.productId',
+                        select: ['productName','categoryId','productImageUrl','productPrice'],
+                    },
+                };
+
+                OrderModel.paginate(query, options).then((result) => {
+                    return res.status(STATUS.SUCCESS_CODE).json({
+                        message: "Successfully find orders.",
+                        data: result
+                    })
+                }).catch((err) => {
+                    console.error("🚀 ~ file: orderController.js:166 ~ ProductController ~ OrderModel.paginate ~ err:", err)
+                    return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                        message: err.message
+                    })
+                });
+            }
+
+        } catch (err) {
+            console.error("🚀 ~ file: orderController.js:174 ~ ProductController ~ err:", err)
+            return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                message: "Something went wrong.",
+            });
+        }
+    }
+
 }
 
 module.exports = new ProductController();

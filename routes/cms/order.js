@@ -8,5 +8,6 @@ const adminAuthCheck = require("../../middleware/cms/admin-auth-check");
 const orderController = require('../../controllers/cms/orderController')
 
 router.post('/create', adminAuthCheck, orderController.createOrder)
+router.post('/list', adminAuthCheck, orderController.getOrdersList)
 
 module.exports = router;
