@@ -121,6 +121,7 @@ class ProductController extends CmsController {
     * 
     * @param {Number} page - Page number.
     * @param {Number} limit - Data limit perpage.
+    * @param {ObjectId} userId - User Id.
     * 
     * @return {Array} - It will give us Paginate list of Orders.
     * 
@@ -134,6 +135,7 @@ class ProductController extends CmsController {
             const validationSchema = Joi.object({
                 page: Joi.number().required(),
                 limit: Joi.number().required(),
+                userId: Joi.objectId().optional().allow(null, '')
             });
             const { error, value } = validationSchema.validate(body);
 
@@ -143,6 +145,10 @@ class ProductController extends CmsController {
                 })
             } else {
                 let query = {};
+
+                if (value.userId) {
+                    query.userId = value.userId
+                }
 
                 let options = {
                     sort: { createdAt: -1 },
