@@ -87,8 +87,6 @@ class ProductController extends CmsController {
                     }
                     return acc
                 }, [])
-                
-                
                 data.totalAmount = data.items.reduce((acc, curr) => {
                     if (curr) {
                         acc = acc + (curr.price * curr.quantity)
@@ -96,7 +94,7 @@ class ProductController extends CmsController {
                     return acc
                 }, 0)
 
-                let order = new OrderModel(data)                
+                let order = new OrderModel(data)
                 order.save().then((result) => {
                     return res.status(STATUS.CREATED_CODE).json({
                         message: "Order created successfully.",
@@ -153,11 +151,11 @@ class ProductController extends CmsController {
                     populate: [
                         {
                             path: 'userId',
-                            select: ['firstName','lastName','email'],
+                            select: ['firstName', 'lastName', 'email'],
                         },
                         {
                             path: 'items.productId',
-                            select: ['productName','categoryId','productImageUrl','productPrice'],
+                            select: ['productName', 'categoryId', 'productImageUrl', 'productPrice'],
                         },
                     ]
                 };

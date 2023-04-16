@@ -3,6 +3,7 @@ Joi.objectId = require('joi-objectid')(Joi)
 
 const CategoryModel = require('../../models/tbl_category')
 const ProductModel = require('../../models/tbl_product')
+const OrderModel = require('../../models/tbl_order')
 const { CmsController } = require('./cmsController');
 const { STATUS } = require('../../config/statuscode');
 
@@ -294,8 +295,19 @@ class ProductController extends CmsController {
                 })
             } else {
 
-                ProductModel.findById(value._id).exec().then((result) => {
+                ProductModel.findById(value._id).exec().then(async (result) => {
                     if (result) {
+
+                        let availableOrdersCount = await OrderModel.count({
+                            'items.productId' : value._id
+                        })
+
+                        if (availableOrdersCount > 0) {
+                            return res.status(STATUS.FORBIDDEN_CODE).json({
+                                message: `There are ${availableOrdersCount} orders created for this product, So you can't delete this product.`
+                            })
+                        }
+
                         ProductModel.deleteById(value._id).exec().then((result) => {
                             if (result) {
                                 return res.status(STATUS.SUCCESS_CODE).json({
