@@ -189,6 +189,7 @@ class CategoryController extends CmsController {
     * 
     * @param {ObjectId} _id - Category Id.
     * @param {String} categoryName - Category Name.
+    * @param {String} status - Status.
     * 
     * @return {Object} - Will get Object data after update Category.
     * 
@@ -201,7 +202,8 @@ class CategoryController extends CmsController {
 
             const validationSchema = Joi.object({
                 _id: Joi.objectId().required(),
-                categoryName: Joi.string().optional(),                
+                categoryName: Joi.string().optional(),
+                status: Joi.string().optional().valid(...Object.values(CATEGORY_CONFIG.STATUS_TYPE)),
             });
             const { error, value } = validationSchema.validate(body);
 
