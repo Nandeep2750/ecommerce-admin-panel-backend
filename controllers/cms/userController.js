@@ -75,6 +75,34 @@ class UserController extends CmsController {
         }
     }
 
+    /** ---------- Get All User List  ----------
+    * 
+    * @return {Array} - It will give us list of Users.
+    * 
+    * ---------------------------------------- */
+
+    getAllUserList = (req, res, next) => {
+
+        try {
+            UserModel.find().select(['firstName', 'lastName', 'email', 'gender', 'status']).then((result) => {
+                return res.status(STATUS.SUCCESS_CODE).json({
+                    message: "Successfully find all users.",
+                    data: result
+                })
+            }).catch((err) => {
+                console.error("🚀 ~ file: userController.js:94 ~ UserController ~ UserModel.find ~ err:", err)
+                return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                    message: err.message
+                })
+            });
+        } catch (err) {
+            console.error("🚀 ~ file: userController.js:99 ~ UserController ~ err:", err)
+            return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                message: "Something went wrong.",
+            });
+        }
+    }
+
     /** ---------- Get User By ID ----------
     * 
     * @param {String} userId - User ID.
