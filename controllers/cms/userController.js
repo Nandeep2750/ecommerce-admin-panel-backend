@@ -75,6 +75,58 @@ class UserController extends CmsController {
         }
     }
 
+    /** ---------- Get User By ID ----------
+    * 
+    * @param {String} userId - User ID.
+    * 
+    * @return {Object} - It will give us User details.
+    * 
+    * ---------------------------------------- */
+
+    getUserByID = (req, res, next) => {
+
+        try {
+
+            const { query } = req;
+
+            const validationSchema = Joi.object({
+                userId: Joi.objectId().required()
+            });
+            const { error, value } = validationSchema.validate(query);
+
+            if (error) {
+                return res.status(STATUS.BAD_REQUEST_CODE).json({
+                    message: error.message,
+                })
+            } else {
+                UserModel.findById(value.userId)
+                    .select(['firstName', 'lastName', 'email', 'gender', 'status'])
+                    .exec().then((result) => {
+                        if (result) {
+                            return res.status(STATUS.SUCCESS_CODE).json({
+                                message: "User details fetched successfully",
+                                data: result
+                            })
+                        } else {
+                            return res.status(STATUS.NOT_FOUND_CODE).json({
+                                message: "No user available for given id."
+                            })
+                        }
+                    }).catch((err) => {
+                        console.error("🚀 ~ file: userController.js:116 ~ UserController ~ .exec ~ err:", err)
+                        return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                            message: err.message
+                        })
+                    })
+            }
+        } catch (err) {
+            console.error("🚀 ~ file: userController.js:123 ~ UserController ~ err:", err)
+            return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                message: "Something went wrong.",
+            });
+        }
+    }
+
     /** ---------- Create User  ----------
     * 
     * @param {String} firstName - First Name.
