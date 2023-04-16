@@ -10,6 +10,7 @@ const userController = require('../../controllers/cms/userController')
 router.post('/list', adminAuthCheck, userController.getUserList);
 router.get('/details-by-id', adminAuthCheck, userController.getUserByID);
 router.post('/create', adminAuthCheck, userController.createUser);
+router.put('/edit', adminAuthCheck, userController.updateUser);
 router.post('/active-inactive', adminAuthCheck, userController.activeInactiveUser);
 
 module.exports = router;

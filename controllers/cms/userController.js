@@ -165,43 +165,104 @@ class UserController extends CmsController {
                 }
 
                 UserModel.findOne(filter)
-                .exec()
-                .then((user) => {
-                    if (user) {
-                        if (value.email && user.email === value.email) {
-                            return res.status(STATUS.CONFLICT_CODE).json({
-                                message: `This user is already registered with this email, please use another one.`
-                            })
+                    .exec()
+                    .then((user) => {
+                        if (user) {
+                            if (value.email && user.email === value.email) {
+                                return res.status(STATUS.CONFLICT_CODE).json({
+                                    message: `This user is already registered with this email, please use another one.`
+                                })
+                            }
+                        } else {
+
+                            if (value.password) {
+                                let hashPassword = bcrypt.hashSync(value.password, USER_CONFIG.SALT_ROUNDS);
+                                value.password = hashPassword
+                            }
+
+                            let user = new UserModel(value)
+                            user.save().then((result) => {
+                                return res.status(STATUS.CREATED_CODE).json({
+                                    message: "User successfully added.",
+                                    data: result
+                                })
+                            }).catch((err) => {
+                                console.error("🚀 ~ file: userController.js:142 ~ UserController ~ user.save ~ err:", err)
+                                return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                                    message: err.message
+                                })
+                            });
                         }
+                    }).catch((err) => {
+                        console.error("🚀 ~ file: userController.js:149 ~ UserController ~ .then ~ err:", err)
+                        return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                            message: err.message
+                        })
+                    })
+            }
+        } catch (err) {
+            console.error("🚀 ~ file: userController.js:157 ~ UserController ~ err:", err)
+            return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
+                message: "Something went wrong.",
+            });
+        }
+    }
+
+    /** ---------- Update User ----------
+    * 
+    * @param {ObjectId} _id - User Id.
+    * @param {String} firstName - First Name.
+    * @param {String} lastName - Last Name.
+    * @param {String} gender - Gender.
+    * @param {String} status - Status.
+    * 
+    * @return {Object} - Will get Object data after update User.
+    * 
+    * ---------------------------------------- */
+
+    updateUser = async (req, res, next) => {
+
+        try {
+            const { body } = req;
+            const { GENDER } = USER_CONFIG;
+
+            const validationSchema = Joi.object({
+                _id: Joi.objectId().required(),
+                firstName: Joi.string().optional(),
+                lastName: Joi.string().optional(),
+                gender: Joi.string().optional().valid(...Object.values(GENDER)),
+                status: Joi.string().optional().valid(USER_CONFIG.STATUS_TYPE.ACTIVE, USER_CONFIG.STATUS_TYPE.INACTIVE)
+            });
+            const { error, value } = validationSchema.validate(body);
+
+            if (error) {
+                return res.status(STATUS.BAD_REQUEST_CODE).json({
+                    message: error.message,
+                })
+            } else {
+
+                UserModel.findByIdAndUpdate(value._id, { ...value }, { new: true })
+                .select(["firstName","lastName","email","gender","status"]).exec().then((result) => {
+                    if (result) {
+                        return res.status(STATUS.SUCCESS_CODE).json({
+                            message: `User updated successfully.`,
+                            data: result
+                        })
                     } else {
-
-                        if (value.password) {
-                            let hashPassword = bcrypt.hashSync(value.password, USER_CONFIG.SALT_ROUNDS);
-                            value.password = hashPassword
-                        }
-
-                        let user = new UserModel(value)
-                        user.save().then((result) => {
-                            return res.status(STATUS.CREATED_CODE).json({
-                                message: "User successfully added.",
-                                data: result
-                            })
-                        }).catch((err) => {
-                            console.error("🚀 ~ file: userController.js:142 ~ UserController ~ user.save ~ err:", err)
-                            return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
-                                message: err.message
-                            })
-                        });
+                        return res.status(STATUS.NOT_FOUND_CODE).json({
+                            message: "No User found for given id."
+                        })
                     }
                 }).catch((err) => {
-                    console.error("🚀 ~ file: userController.js:149 ~ UserController ~ .then ~ err:", err)
+                    console.error("🚀 ~ file: userController.js:119 ~ UserController ~ .exec ~ err:", err)
                     return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
                         message: err.message
                     })
                 })
             }
+
         } catch (err) {
-            console.error("🚀 ~ file: userController.js:157 ~ UserController ~ err:", err)
+            console.error("🚀 ~ file: userController.js:266 ~ UserController ~ updateUser= ~ err:", err)
             return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
                 message: "Something went wrong.",
             });
@@ -250,7 +311,7 @@ class UserController extends CmsController {
                             })
                         }
                     }).catch((err) => {
-                        console.error("🚀 ~ file: userController.js:119 ~ UserController ~ .exec ~ err:", err)
+                        console.error("🚀 ~ file: userController.js:315 ~ UserController ~ .exec ~ err:", err)
                         return res.status(STATUS.INTERNAL_SERVER_ERROR_CODE).json({
                             message: err.message
                         })
