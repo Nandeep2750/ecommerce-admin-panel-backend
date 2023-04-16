@@ -8,6 +8,7 @@ const adminAuthCheck = require("../../middleware/cms/admin-auth-check");
 const userController = require('../../controllers/cms/userController')
 
 router.post('/list', adminAuthCheck, userController.getUserList);
+router.get('/list-all', adminAuthCheck, userController.getAllUserList);
 router.get('/details-by-id', adminAuthCheck, userController.getUserByID);
 router.post('/create', adminAuthCheck, userController.createUser);
 router.put('/edit', adminAuthCheck, userController.updateUser);
