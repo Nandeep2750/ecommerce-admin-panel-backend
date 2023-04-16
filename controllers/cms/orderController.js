@@ -150,14 +150,16 @@ class ProductController extends CmsController {
                     sort: { createdAt: -1 },
                     page: value.page || PAGINATION_CONFIG.PAGE,
                     limit: value.limit || PAGINATION_CONFIG.LIMIT,
-                    populate: {
-                        path: 'userId',
-                        select: ['firstName','lastName','email'],
-                    },
-                    populate: {
-                        path: 'items.productId',
-                        select: ['productName','categoryId','productImageUrl','productPrice'],
-                    },
+                    populate: [
+                        {
+                            path: 'userId',
+                            select: ['firstName','lastName','email'],
+                        },
+                        {
+                            path: 'items.productId',
+                            select: ['productName','categoryId','productImageUrl','productPrice'],
+                        },
+                    ]
                 };
 
                 OrderModel.paginate(query, options).then((result) => {
